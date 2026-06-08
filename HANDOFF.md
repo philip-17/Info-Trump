@@ -35,13 +35,20 @@ npm start          # = node --use-system-ca server.js  → http://localhost:5180
 - Boucle locale (PC allumé) : `/loop 12h /maj-trump`
 - **Vrai 24/7 sans PC** → **Routine cloud** : `/schedule` (Claude Code, nécessite abonnement Pro/Max + auth claude.ai).
 
+## Dépôt GitHub (cloud)
+- **En ligne : https://github.com/philip-17/Info-Trump** ✅ (tout est poussé).
+- Cloner sur une autre machine (Mac) :
+  ```bash
+  git clone https://github.com/philip-17/Info-Trump.git
+  cd Info-Trump
+  ```
+
 ## Déploiement (mise en ligne 24/7)
 - Prêt : `render.yaml`, `Procfile`, guide complet dans **`DEPLOY.md`**.
-- **État actuel** : dépôt git initialisé + commité **localement**, PAS encore poussé sur GitHub.
-- **À faire** : créer un dépôt GitHub `trump-bourse-tracker` (compte `philip-17`) → `git push` → déployer sur **Render** (Blueprint). Tout est détaillé dans `DEPLOY.md`.
+- **À faire** : déployer sur **Render** (Blueprint) depuis le dépôt `Info-Trump`. Détaillé dans `DEPLOY.md`.
 
 ## Prochaines étapes possibles
-1. **Pousser sur GitHub + déployer sur Render** → URL publique accessible PC + mobile (le cloud = indépendant de la machine).
+1. **Déployer sur Render** (depuis le dépôt `Info-Trump`) → URL publique accessible PC + mobile (le cloud = indépendant de la machine).
 2. Convertir le `/loop` local en **Routine cloud** (`/schedule`) pour du 24/7 sans PC allumé.
 3. Faire un vrai run `/maj-trump` pour intégrer les transactions d'**avril 2026** (déclaration du 20/04/2026 déjà repérée, plus récente que nos données qui s'arrêtent au 19/03).
 

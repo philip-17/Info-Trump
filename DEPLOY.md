@@ -6,23 +6,15 @@ L'app est prête à être déployée sur **Render** (gratuit). Voici les étapes
 
 ---
 
-## Étape 1 — Mettre le code sur GitHub
+## Étape 1 — Code sur GitHub ✅ (déjà fait)
 
-1. Crée un compte sur **https://github.com** (si tu n'en as pas).
-2. Clique sur **« + » → New repository**.
-   - Name : `trump-bourse-tracker`
-   - Visibilité : **Private** (privé) ou Public, comme tu veux.
-   - **Ne coche rien** d'autre (pas de README, .gitignore, licence).
-   - Clique **Create repository**.
-3. GitHub affiche une page avec des commandes. Le dépôt local est **déjà initialisé et commité** (je l'ai fait, sous ton identité `philip-17`). Il ne reste qu'à le relier et l'envoyer. Dans un terminal, depuis le dossier `trump-bourse-tracker`, exécute :
+Le code est **déjà en ligne** : **https://github.com/philip-17/Info-Trump**
 
+Pour le récupérer sur une autre machine (ex. Mac) :
 ```bash
-git remote add origin https://github.com/philip-17/trump-bourse-tracker.git
-git branch -M main
-git push -u origin main
+git clone https://github.com/philip-17/Info-Trump.git
+cd Info-Trump
 ```
-
-> Si ton pseudo GitHub n'est pas exactement `philip-17`, remplace-le dans l'URL ci-dessus.
 
 GitHub te demandera de te connecter (une fenêtre s'ouvre dans le navigateur). Accepte.
 
@@ -32,7 +24,7 @@ GitHub te demandera de te connecter (une fenêtre s'ouvre dans le navigateur). A
 
 1. Va sur **https://render.com** et crée un compte — clique **« Get Started »** et choisis **« Sign in with GitHub »** (le plus simple).
 2. Une fois connecté : **New + → Blueprint**.
-3. Render liste tes dépôts GitHub → choisis **`trump-bourse-tracker`** → **Connect**.
+3. Render liste tes dépôts GitHub → choisis **`Info-Trump`** → **Connect**.
 4. Render détecte automatiquement le fichier `render.yaml` et propose le service. Clique **Apply** / **Create**.
 5. Patiente 1-2 minutes : Render installe et démarre. Quand c'est vert (**Live**), tu obtiens une URL du type :
 
