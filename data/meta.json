@@ -8,6 +8,11 @@
   "disclosedValueRangeUsd": { "min": 220000000, "max": 750000000 },
   "note": "Les montants sont déclarés par fourchettes (et non au centime près) conformément à la loi américaine. Les comptes sont décrits par la Trump Organization comme gérés en gestion discrétionnaire par des tiers. Cette base reprend un échantillon représentatif des transactions déclarées les plus notables ; elle peut être mise à jour à chaque nouvelle déclaration OGE.",
   "lastUpdated": "2026-06-08",
+  "lastFiling": {
+    "label": "OGE 278-T — signé le 2026-05-08 (transactions du T1 2026)",
+    "source": "https://extapps2.oge.gov/201/Presiden.nsf/PAS+Index/405E4EC4E27BE8D185258DF7002DD1C0/$FILE/Trump,%20Donald%20J.-05.08.2026-278T(2).pdf",
+    "recordedAt": "2026-06-08"
+  },
   "otherTrackers": [
     { "name": "Quiver Quantitative", "url": "https://www.quiverquant.com/Donald-Trump-Stock-Trades/" },
     { "name": "Unusual Whales", "url": "https://unusualwhales.com/politics/profile/Donald%20J%20Trump" },

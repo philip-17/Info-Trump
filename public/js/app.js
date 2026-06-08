@@ -71,9 +71,13 @@ async function checkHealth() {
 async function loadMeta() {
   try {
     const m = await API.meta();
+    const filingLine = m.lastFiling
+      ? `<br>📄 <a href="${m.lastFiling.source}" target="_blank" rel="noopener">${m.lastFiling.label}</a>`
+      : "";
     document.getElementById("data-source").innerHTML =
       `<strong>${m.person}</strong><br>Source : ${m.source.split("—")[0].trim()}<br>` +
-      `Période : ${m.period}<br><a href="${m.sourceUrl}" target="_blank" rel="noopener">Voir les déclarations OGE ↗</a>`;
+      `Période : ${m.period}${filingLine}<br>` +
+      `<a href="${m.sourceUrl}" target="_blank" rel="noopener">Voir les déclarations OGE ↗</a>`;
     const note = document.getElementById("stats-note");
     if (note) note.innerHTML =
       `⚠️ ${m.note} Total déclaré sur la période : <strong>${fmt.int(m.disclosedTotalTransactions)}+ transactions</strong> ` +
