@@ -1,5 +1,6 @@
 node_modules/
-.claude/
+.claude/*
+!.claude/commands
 *.log
 .env
 .DS_Store
