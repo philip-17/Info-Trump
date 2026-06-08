@@ -1,0 +1,91 @@
+{
+  "name": "DJT — Alerte cours 24/7",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "minutes", "minutesInterval": 30 }
+          ]
+        }
+      },
+      "id": "node-schedule",
+      "name": "Toutes les 30 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://query1.finance.yahoo.com/v8/finance/chart/DJT?range=1d&interval=5m",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "User-Agent", "value": "Mozilla/5.0" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-http-djt",
+      "name": "Cours DJT (Yahoo)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// === Réglage : seuil de variation (%) qui déclenche l'alerte ===\nconst THRESHOLD = 5;\n\nconst r = $input.first().json.chart.result[0];\nconst m = r.meta;\nconst price = m.regularMarketPrice;\nconst prev = m.chartPreviousClose;\nconst changePct = ((price - prev) / prev) * 100;\nconst trigger = Math.abs(changePct) >= THRESHOLD;\nconst arrow = changePct >= 0 ? '▲' : '▼';\n\nreturn [{ json: {\n  price,\n  prev,\n  changePct: Math.round(changePct * 100) / 100,\n  trigger,\n  message: `${arrow} DJT : ${price} $ (${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)} %) — seuil ${THRESHOLD} % ${trigger ? 'DÉPASSÉ ⚠️' : 'ok'}`\n}}];"
+      },
+      "id": "node-code",
+      "name": "Calcul variation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-trigger",
+              "leftValue": "={{ $json.trigger }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if",
+      "name": "Seuil dépassé ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://REMPLACE-PAR-TON-WEBHOOK",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: $json.message }) }}",
+        "options": {}
+      },
+      "id": "node-notify",
+      "name": "Notifier (Discord/Slack)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1140, 220]
+    }
+  ],
+  "connections": {
+    "Toutes les 30 min": { "main": [[{ "node": "Cours DJT (Yahoo)", "type": "main", "index": 0 }]] },
+    "Cours DJT (Yahoo)": { "main": [[{ "node": "Calcul variation", "type": "main", "index": 0 }]] },
+    "Calcul variation": { "main": [[{ "node": "Seuil dépassé ?", "type": "main", "index": 0 }]] },
+    "Seuil dépassé ?": { "main": [[{ "node": "Notifier (Discord/Slack)", "type": "main", "index": 0 }], []] }
+  },
+  "settings": {},
+  "active": false
+}
