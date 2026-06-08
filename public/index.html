@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trump Bourse Tracker</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-logo">📈</span>
+        <div class="brand-text">
+          <strong>Trump Bourse</strong>
+          <small>Tracker</small>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="overview">
+          <span class="nav-ic">🏠</span> Vue d'ensemble
+        </button>
+        <button class="nav-item" data-view="transactions">
+          <span class="nav-ic">💼</span> Transactions
+        </button>
+        <button class="nav-item" data-view="stats">
+          <span class="nav-ic">📊</span> Statistiques
+        </button>
+        <button class="nav-item" data-view="djt">
+          <span class="nav-ic">💹</span> Action DJT
+        </button>
+        <button class="nav-item" data-view="alerts">
+          <span class="nav-ic">🔔</span> Alertes
+        </button>
+      </nav>
+      <div class="sidebar-foot">
+        <div id="data-source" class="data-source">Chargement…</div>
+      </div>
+    </aside>
+
+    <!-- ============ MAIN ============ -->
+    <main class="main">
+      <header class="topbar">
+        <h1 id="view-title">Transactions</h1>
+        <div class="topbar-right">
+          <span id="live-dot" class="live-dot" title="Connexion serveur"></span>
+          <button id="refresh-btn" class="btn-ghost" title="Rafraîchir">⟳ Rafraîchir</button>
+        </div>
+      </header>
+
+      <!-- ---------- VUE : VUE D'ENSEMBLE ---------- -->
+      <section id="view-overview" class="view active">
+        <div class="kpi-row" id="ov-kpis"></div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>🕒 Dernières transactions</h3>
+            <div id="ov-latest" class="feed"></div>
+          </div>
+          <div class="card chart-card">
+            <h3>Répartition par secteur</h3>
+            <canvas id="chart-ov-sector"></canvas>
+          </div>
+        </div>
+        <div class="card chart-card ov-chart">
+          <h3>💹 Action DJT — 6 mois</h3>
+          <canvas id="chart-ov-djt"></canvas>
+        </div>
+      </section>
+
+      <!-- ---------- VUE : TRANSACTIONS ---------- -->
+      <section id="view-transactions" class="view">
+        <div class="kpi-row" id="tx-kpis"></div>
+        <div class="toolbar">
+          <input id="search" class="input" type="search" placeholder="🔍 Rechercher (Apple, NVDA…)" />
+          <select id="filter-type" class="input">
+            <option value="">Tous types</option>
+            <option value="buy">Achats</option>
+            <option value="sell">Ventes</option>
+          </select>
+          <select id="filter-sector" class="input"><option value="">Tous secteurs</option></select>
+          <button id="export-csv" class="btn-ghost" title="Exporter en CSV">⬇ Export CSV</button>
+        </div>
+        <div class="card table-card">
+          <table class="table" id="tx-table">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="date">Date</th>
+                <th class="sortable" data-sort="company">Société</th>
+                <th class="sortable" data-sort="ticker">Ticker</th>
+                <th class="sortable" data-sort="type">Type</th>
+                <th class="sortable" data-sort="sector">Secteur</th>
+                <th class="sortable num" data-sort="estValue">Montant déclaré</th>
+              </tr>
+            </thead>
+            <tbody id="tx-body"></tbody>
+          </table>
+          <div id="tx-empty" class="empty hidden">Aucune transaction ne correspond.</div>
+        </div>
+      </section>
+
+      <!-- ---------- VUE : STATISTIQUES ---------- -->
+      <section id="view-stats" class="view">
+        <div class="kpi-row" id="stats-kpis"></div>
+        <div class="grid-2">
+          <div class="card chart-card">
+            <h3>Répartition par secteur (valeur estimée)</h3>
+            <canvas id="chart-sector"></canvas>
+          </div>
+          <div class="card chart-card">
+            <h3>Type d'actif</h3>
+            <canvas id="chart-asset"></canvas>
+          </div>
+          <div class="card chart-card">
+            <h3>Top 10 sociétés (valeur estimée)</h3>
+            <canvas id="chart-ticker"></canvas>
+          </div>
+          <div class="card chart-card">
+            <h3>Achats vs Ventes par mois</h3>
+            <canvas id="chart-month"></canvas>
+          </div>
+        </div>
+        <p class="disclaimer" id="stats-note"></p>
+      </section>
+
+      <!-- ---------- VUE : ACTION DJT ---------- -->
+      <section id="view-djt" class="view">
+        <div class="djt-head">
+          <div class="card djt-price-card">
+            <div class="djt-symbol"><span class="badge">DJT</span> Trump Media &amp; Technology</div>
+            <div id="djt-price" class="djt-price">—</div>
+            <div id="djt-change" class="djt-change">—</div>
+            <div id="djt-meta" class="djt-meta"></div>
+          </div>
+          <div class="card djt-stats" id="djt-stats"></div>
+        </div>
+        <div class="card chart-card">
+          <div class="djt-toolbar">
+            <div class="djt-ranges" id="djt-ranges">
+              <button data-range="5d">5J</button>
+              <button data-range="1mo">1M</button>
+              <button data-range="6mo" class="active">6M</button>
+              <button data-range="1y">1A</button>
+              <button data-range="5y">5A</button>
+            </div>
+            <button id="djt-compare-btn" class="btn-ghost">⚖️ Comparer au S&amp;P 500</button>
+          </div>
+          <canvas id="chart-djt"></canvas>
+        </div>
+      </section>
+
+      <!-- ---------- VUE : ALERTES ---------- -->
+      <section id="view-alerts" class="view">
+        <div class="grid-2">
+          <div class="card">
+            <h3>🔔 Paramètres des alertes</h3>
+            <div class="setting">
+              <label>Notifications du navigateur</label>
+              <button id="notif-toggle" class="btn">Activer</button>
+            </div>
+            <div class="setting">
+              <label>Alerte si DJT varie de plus de</label>
+              <div class="inline">
+                <input id="djt-threshold" class="input small" type="number" value="5" min="0" step="0.5" /> %
+              </div>
+            </div>
+            <div class="setting">
+              <label>Vérification automatique</label>
+              <select id="poll-interval" class="input">
+                <option value="0">Désactivée</option>
+                <option value="60000">Toutes les minutes</option>
+                <option value="300000" selected>Toutes les 5 min</option>
+                <option value="900000">Toutes les 15 min</option>
+              </select>
+            </div>
+            <button id="test-notif" class="btn-ghost">Tester une notification</button>
+          </div>
+          <div class="card">
+            <h3>📨 Activité récente</h3>
+            <div id="alerts-feed" class="feed"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast-wrap" class="toast-wrap"></div>
+
+  <script src="/vendor/chart.umd.min.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/charts.js"></script>
+  <script src="/js/alerts.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

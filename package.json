@@ -1,0 +1,12 @@
+{
+  "name": "trump-bourse-tracker",
+  "version": "1.0.0",
+  "description": "Tableau de bord web pour suivre les transactions boursières déclarées de Donald Trump et l'action DJT (Trump Media).",
+  "type": "module",
+  "scripts": {
+    "start": "node --use-system-ca server.js",
+    "dev": "node --use-system-ca server.js"
+  },
+  "engines": { "node": ">=20" },
+  "private": true
+}

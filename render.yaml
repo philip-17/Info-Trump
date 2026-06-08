@@ -1,0 +1,13 @@
+# Blueprint Render — déploiement en 1 clic.
+# Sur https://render.com → New → Blueprint → connecte ce dépôt GitHub.
+services:
+  - type: web
+    name: trump-bourse-tracker
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22.11.0"
