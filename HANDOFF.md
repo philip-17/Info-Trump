@@ -2,6 +2,27 @@
 
 Ce fichier résume **tout** le projet pour qu'une nouvelle session Claude Code reprenne **sans repartir de zéro**. Ouvre simplement ce dossier avec Claude Code sur ton Mac : ce fichier + le code donnent tout le contexte.
 
+## 🍎 Reprise rapide sur Mac
+
+**Prérequis** (vérifie dans le Terminal) :
+```bash
+node --version    # besoin de Node ≥ 18. Sinon : brew install node  (ou https://nodejs.org)
+git --version     # normalement déjà présent sur Mac
+```
+
+**Récupérer et lancer le projet** :
+```bash
+git clone https://github.com/philip-17/Info-Trump.git
+cd Info-Trump
+node server.js              # → ouvre http://localhost:5180
+```
+> Sur Mac, pas besoin du flag `--use-system-ca` (c'était spécifique au proxy du PC Windows). `node server.js` suffit.
+
+**Reprendre la collaboration avec Claude Code** : dans le dossier `Info-Trump`, lance `claude`, puis écris :
+> « Lis HANDOFF.md et reprenons le projet Info-Trump. »
+
+La nouvelle session aura alors tout le contexte (état, décisions, prochaines étapes).
+
 ## Le projet
 `trump-bourse-tracker` — application web (serveur Node **sans dépendance**) pour suivre :
 - les **transactions boursières déclarées de Donald Trump** (déclarations officielles OGE 278-T) ;
