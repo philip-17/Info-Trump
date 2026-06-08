@@ -65,11 +65,13 @@ npm start          # = node --use-system-ca server.js  → http://localhost:5180
   ```
 
 ## Déploiement (mise en ligne 24/7)
-- Prêt : `render.yaml`, `Procfile`, guide complet dans **`DEPLOY.md`**.
-- **À faire** : déployer sur **Render** (Blueprint) depuis le dépôt `Info-Trump`. Détaillé dans `DEPLOY.md`.
+- **Cible retenue : Vercel** (pas de mise en veille, contrairement à Render → inutile d'UptimeRobot).
+- **App adaptée pour le serverless** : front statique (`public/`) + 6 fonctions `api/*.js` qui réutilisent la logique partagée **`lib/core.js`** ; `vercel.json` configure le tout. Le `server.js` local reste fonctionnel (dev + hébergement Mac mini) et réutilise aussi `lib/core.js`.
+- Guide pas à pas (Vercel = Option A, Render = Option B) dans **`DEPLOY.md`**.
+- **À faire** : importer le dépôt `Info-Trump` sur https://vercel.com → Deploy.
 
 ## Prochaines étapes possibles
-1. **Déployer sur Render** (depuis le dépôt `Info-Trump`) → URL publique accessible PC + mobile (le cloud = indépendant de la machine).
+1. **Déployer sur Vercel** (importer le dépôt `Info-Trump`) → URL publique accessible PC + mobile, sans mise en veille (le cloud = indépendant de la machine).
 2. Convertir le `/loop` local en **Routine cloud** (`/schedule`) pour du 24/7 sans PC allumé.
 3. Faire un vrai run `/maj-trump` pour intégrer les transactions d'**avril 2026** (déclaration du 20/04/2026 déjà repérée, plus récente que nos données qui s'arrêtent au 19/03).
 
