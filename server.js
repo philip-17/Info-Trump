@@ -11,6 +11,7 @@ import {
   loadData,
   computeTrades,
   computeStats,
+  computePosts,
   buildDJT,
   buildCompare,
 } from "./lib/core.js";
@@ -75,6 +76,8 @@ const server = http.createServer(async (req, res) => {
         return sendJSON(res, 200, await computeTrades(query));
       case "/api/stats":
         return sendJSON(res, 200, await computeStats());
+      case "/api/posts":
+        return sendJSON(res, 200, await computePosts());
       case "/api/djt":
         try {
           return sendJSON(res, 200, await buildDJT(query));

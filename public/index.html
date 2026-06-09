@@ -34,6 +34,9 @@
         <button class="nav-item" data-view="alerts">
           <span class="nav-ic">🔔</span> Alertes
         </button>
+        <button class="nav-item" data-view="posts">
+          <span class="nav-ic">🗣️</span> Posts Trump
+        </button>
       </nav>
       <div class="sidebar-foot">
         <div id="data-source" class="data-source">Chargement…</div>
@@ -180,6 +183,18 @@
             <h3>📨 Activité récente</h3>
             <div id="alerts-feed" class="feed"></div>
           </div>
+        </div>
+      </section>
+
+      <!-- ---------- VUE : POSTS TRUMP ---------- -->
+      <section id="view-posts" class="view">
+        <p class="posts-intro">
+          🇺🇸 Derniers posts de Donald Trump sur <strong>Truth Social</strong>, résumés et analysés
+          par Claude — alimentés en continu par n8n (le même contenu que les alertes Telegram).
+        </p>
+        <div id="posts-list" class="posts-list"></div>
+        <div id="posts-empty" class="empty hidden">
+          Aucun post pour le moment. La prochaine publication de Trump apparaîtra ici automatiquement.
         </div>
       </section>
     </main>

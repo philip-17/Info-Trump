@@ -1,5 +1,5 @@
 // Orchestrateur : routeur de vues + rendu.
-const TITLES = { overview: "Vue d'ensemble", transactions: "Transactions", stats: "Statistiques", djt: "Action DJT", alerts: "Alertes" };
+const TITLES = { overview: "Vue d'ensemble", transactions: "Transactions", stats: "Statistiques", djt: "Action DJT", alerts: "Alertes", posts: "Posts Trump" };
 const state = {
   current: "overview", stats: null, sectorsLoaded: false, djtRange: "6mo",
   lastTrades: [], sort: { key: "date", dir: -1 }, compareMode: false, djtTimer: null,
@@ -20,6 +20,7 @@ function loadView(name) {
   else if (name === "stats") loadStats();
   else if (name === "djt") loadDJT(state.djtRange);
   else if (name === "alerts") Alerts.initUI();
+  else if (name === "posts") loadPosts();
   manageDjtAutoRefresh(name);
 }
 
@@ -189,6 +190,58 @@ async function loadStats() {
 }
 
 function assetLabel(a) { return { stock: "Actions", etf: "ETF / Fonds", bond: "Obligations", crypto: "Crypto" }[a] || a; }
+
+// ---------------- Vue : Posts Trump ----------------
+async function loadPosts() {
+  const list = document.getElementById("posts-list");
+  const empty = document.getElementById("posts-empty");
+  list.innerHTML = `<div class="empty">Chargement…</div>`;
+  let posts = [];
+  try {
+    const r = await API.posts();
+    posts = r.posts || [];
+  } catch {
+    list.innerHTML = "";
+    empty.textContent = "Impossible de charger les posts.";
+    empty.classList.remove("hidden");
+    return;
+  }
+  empty.classList.toggle("hidden", posts.length > 0);
+  if (!posts.length) {
+    list.innerHTML = "";
+    empty.textContent = "Aucun post pour le moment. La prochaine publication de Trump apparaîtra ici automatiquement.";
+    return;
+  }
+  list.innerHTML = posts.map((p) => {
+    const orig = (p.originalContent || "").trim();
+    const origBlock = orig ? `<div class="post-original">${escapeHtml(orig)}</div>` : "";
+    const link = p.postUrl
+      ? `<a class="post-link" href="${escapeHtml(p.postUrl)}" target="_blank" rel="noopener">Voir sur Truth Social ↗</a>`
+      : "";
+    const title = (p.title && p.title.trim() && p.title.trim() !== orig)
+      ? `<div class="post-title">${escapeHtml(p.title.trim())}</div>` : "";
+    return `<article class="card post-card">
+      <div class="post-head">
+        <span class="post-flag">🇺🇸</span>
+        <span class="post-date">${fmt.dateTime(p.date)}</span>
+      </div>
+      ${title}
+      ${origBlock}
+      <div class="post-summary">${formatSummary(p.summary || "")}</div>
+      ${link}
+    </article>`;
+  }).join("");
+}
+
+// Met en forme le résumé Claude : échappe le HTML, *gras* → <strong>, sauts de ligne → <br>.
+function formatSummary(text) {
+  let s = escapeHtml(text);
+  s = s.replace(/\*([^*\n]+)\*/g, "<strong>$1</strong>");
+  return s.replace(/\n/g, "<br>");
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
 
 // ---------------- Vue : DJT ----------------
 async function loadDJT(range) {
