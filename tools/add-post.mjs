@@ -5,8 +5,10 @@
 // Execute Command, juste après le nœud « Résumé Claude » :
 //   node tools/add-post.mjs /tmp/trump_post.json
 //
-// Le fichier d'entrée est un objet JSON : { date, title, originalContent, postUrl, summary }.
-// Seul `summary` est obligatoire (sinon le post est ignoré — on n'affiche rien d'inventé).
+// Entrée : un objet JSON { date, title, originalContent, postUrl, summary }, fourni
+// soit via un fichier (argument positionnel), soit en base64 via --b64 <data>
+// (pratique depuis n8n : aucun souci d'échappement shell). Seul `summary` est
+// obligatoire (sinon le post est ignoré — on n'affiche rien d'inventé).
 //
 // Options : --no-git (n'écrit que le JSON, sans commit/push — utile pour tester).
 import { readFile, writeFile } from "node:fs/promises";
@@ -21,10 +23,12 @@ const MAX_POSTS = 50;
 
 const args = process.argv.slice(2);
 const noGit = args.includes("--no-git");
-const inPath = args.find((a) => !a.startsWith("--"));
+const flagVal = (name) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : null; };
+const b64 = flagVal("--b64");
+const inPath = args.find((a, i) => !a.startsWith("--") && args[i - 1] !== "--b64");
 
-if (!inPath) {
-  console.error("Usage : node add-post.mjs <post.json> [--no-git]");
+if (!b64 && !inPath) {
+  console.error("Usage : node add-post.mjs (<post.json> | --b64 <base64>) [--no-git]");
   process.exit(1);
 }
 
@@ -32,7 +36,8 @@ function git(...a) {
   return execFileSync("git", a, { cwd: REPO, stdio: ["ignore", "pipe", "pipe"] }).toString().trim();
 }
 
-const incoming = JSON.parse(await readFile(inPath, "utf-8"));
+const rawJson = b64 ? Buffer.from(b64, "base64").toString("utf-8") : await readFile(inPath, "utf-8");
+const incoming = JSON.parse(rawJson);
 const summary = String(incoming.summary || "").trim();
 if (!summary) {
   console.log("⏭️  Aucun résumé fourni → rien ajouté (règle : on n'affiche pas de contenu vide/inventé).");
