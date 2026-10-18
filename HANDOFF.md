@@ -45,10 +45,11 @@ npm start          # = node --use-system-ca server.js  → http://localhost:5180
 | `tools/append-trades.mjs` | Ajoute de nouvelles transactions **en sécurité** (validation, anti-doublon). |
 | `.claude/commands/maj-trump.md` | Commande **`/maj-trump`** : cherche une nouvelle déclaration et met à jour. |
 
-**5 menus** : Vue d'ensemble · Transactions (triable + export CSV) · Statistiques · Action DJT (+ comparaison S&P 500) · Alertes.
+**7 menus** : Vue d'ensemble · Transactions (triable + export CSV) · Statistiques · Action DJT (+ comparaison S&P 500) · Alertes · Posts Trump · Décrets (Federal Register).
 
 ## Sources de données (point clé)
 - **DJT** = Yahoo Finance (gratuit, temps réel, relayé par le serveur → pas de souci CORS). ✅ Vraiment continu.
+- **Décrets** = API officielle du Federal Register (gratuite, sans clé, relayée par le serveur, cache 30 min) → `buildDecrees()` dans `lib/core.js`, route `/api/decrees?type=executive_order|proclamation|memorandum`.
 - **Trades de Trump** = **aucune API gratuite temps réel** (les API politiques ne couvrent que le Congrès, pas le Président). Source = déclarations OGE, publiées **par à-coups**. ⚠️ Les PDF OGE sont **scannés** (non parsables automatiquement) → pour mettre à jour, lire une **source déjà parsée** (Quiver, Capitol Trades, article fiable).
 
 ## Automatisation des mises à jour
@@ -66,7 +67,7 @@ npm start          # = node --use-system-ca server.js  → http://localhost:5180
 
 ## Déploiement (mise en ligne 24/7)
 - **Cible retenue : Vercel** (pas de mise en veille, contrairement à Render → inutile d'UptimeRobot).
-- **App adaptée pour le serverless** : front statique (`public/`) + 6 fonctions `api/*.js` qui réutilisent la logique partagée **`lib/core.js`** ; `vercel.json` configure le tout. Le `server.js` local reste fonctionnel (dev + hébergement Mac mini) et réutilise aussi `lib/core.js`.
+- **App adaptée pour le serverless** : front statique (`public/`) + 8 fonctions `api/*.js` qui réutilisent la logique partagée **`lib/core.js`** ; `vercel.json` configure le tout. Le `server.js` local reste fonctionnel (dev + hébergement Mac mini) et réutilise aussi `lib/core.js`.
 - Guide pas à pas (Vercel = Option A, Render = Option B) dans **`DEPLOY.md`**.
 - **À faire** : importer le dépôt `Info-Trump` sur https://vercel.com → Deploy.
 

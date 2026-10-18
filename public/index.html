@@ -37,6 +37,9 @@
         <button class="nav-item" data-view="posts">
           <span class="nav-ic">🗣️</span> Posts Trump
         </button>
+        <button class="nav-item" data-view="decrees">
+          <span class="nav-ic">📜</span> Décrets
+        </button>
       </nav>
       <div class="sidebar-foot">
         <div id="data-source" class="data-source">Chargement…</div>
@@ -196,6 +199,23 @@
         <div id="posts-empty" class="empty hidden">
           Aucun post pour le moment. La prochaine publication de Trump apparaîtra ici automatiquement.
         </div>
+      </section>
+
+      <!-- ---------- VUE : DÉCRETS (Federal Register) ---------- -->
+      <section id="view-decrees" class="view">
+        <p class="posts-intro">
+          📜 Textes signés par Donald Trump depuis le début de son 2e mandat, tirés de l'API officielle du
+          <a href="https://www.federalregister.gov/presidential-documents" target="_blank" rel="noopener">Federal Register</a>
+          (journal officiel américain). Ils y paraissent quelques jours après leur signature.
+        </p>
+        <div class="kpi-row" id="decrees-kpis"></div>
+        <div class="djt-ranges" id="decree-types">
+          <button data-type="executive_order" class="active">Décrets</button>
+          <button data-type="proclamation">Proclamations</button>
+          <button data-type="memorandum">Mémorandums</button>
+        </div>
+        <div id="decrees-list" class="posts-list"></div>
+        <div id="decrees-empty" class="empty hidden"></div>
       </section>
     </main>
   </div>

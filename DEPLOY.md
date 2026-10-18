@@ -24,7 +24,7 @@ GitHub te demandera de te connecter (une fenêtre s'ouvre dans le navigateur). A
 
 ### ✅ Option A — Vercel (recommandée)
 
-> L'app a été **adaptée pour Vercel** : le front est servi en **statique** (`public/`) et les 6 routes API sont des **fonctions serverless** (`api/*.js`), qui réutilisent la même logique que le serveur local via **`lib/core.js`** (source unique). Le `vercel.json` configure tout automatiquement.
+> L'app a été **adaptée pour Vercel** : le front est servi en **statique** (`public/`) et les 8 routes API sont des **fonctions serverless** (`api/*.js`), qui réutilisent la même logique que le serveur local via **`lib/core.js`** (source unique). Le `vercel.json` configure tout automatiquement.
 >
 > **Avantage clé vs Render : pas de mise en veille.** Le service ne s'endort pas → **pas besoin d'UptimeRobot**. CDN mondial + HTTPS + cache CDN 60 s sur le cours DJT.
 

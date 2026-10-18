@@ -12,6 +12,7 @@ const API = {
   },
   stats() { return this._get("/api/stats"); },
   posts() { return this._get("/api/posts"); },
+  decrees(type = "executive_order") { return this._get("/api/decrees?type=" + type); },
   djt(range = "6mo") { return this._get("/api/djt?range=" + range); },
   compare(range = "6mo") { return this._get("/api/compare?range=" + range); },
   async health() { try { return (await fetch("/api/health")).ok; } catch { return false; } },

@@ -14,6 +14,7 @@ import {
   computePosts,
   buildDJT,
   buildCompare,
+  buildDecrees,
 } from "./lib/core.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -89,6 +90,12 @@ const server = http.createServer(async (req, res) => {
           return sendJSON(res, 200, await buildCompare(query));
         } catch (err) {
           return sendJSON(res, 502, { error: "Comparaison impossible", detail: String(err.message || err) });
+        }
+      case "/api/decrees":
+        try {
+          return sendJSON(res, 200, await buildDecrees(query));
+        } catch (err) {
+          return sendJSON(res, 502, { error: "Impossible de récupérer les décrets", detail: String(err.message || err) });
         }
       default:
         return await serveStatic(req, res);

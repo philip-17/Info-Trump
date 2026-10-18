@@ -1,8 +1,9 @@
 // Orchestrateur : routeur de vues + rendu.
-const TITLES = { overview: "Vue d'ensemble", transactions: "Transactions", stats: "Statistiques", djt: "Action DJT", alerts: "Alertes", posts: "Posts Trump" };
+const TITLES = { overview: "Vue d'ensemble", transactions: "Transactions", stats: "Statistiques", djt: "Action DJT", alerts: "Alertes", posts: "Posts Trump", decrees: "Décrets" };
 const state = {
   current: "overview", stats: null, sectorsLoaded: false, djtRange: "6mo",
   lastTrades: [], sort: { key: "date", dir: -1 }, compareMode: false, djtTimer: null,
+  decreeType: "executive_order",
 };
 
 // ---------------- Navigation ----------------
@@ -21,6 +22,7 @@ function loadView(name) {
   else if (name === "djt") loadDJT(state.djtRange);
   else if (name === "alerts") Alerts.initUI();
   else if (name === "posts") loadPosts();
+  else if (name === "decrees") loadDecrees(state.decreeType);
   manageDjtAutoRefresh(name);
 }
 
@@ -243,6 +245,50 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
+// ---------------- Vue : Décrets (Federal Register) ----------------
+async function loadDecrees(type) {
+  state.decreeType = type;
+  document.querySelectorAll("#decree-types button").forEach((b) => b.classList.toggle("active", b.dataset.type === type));
+  const list = document.getElementById("decrees-list");
+  const empty = document.getElementById("decrees-empty");
+  list.innerHTML = `<div class="empty">Chargement…</div>`;
+  empty.classList.add("hidden");
+  let r;
+  try {
+    r = await API.decrees(type);
+  } catch {
+    list.innerHTML = "";
+    document.getElementById("decrees-kpis").innerHTML = "";
+    empty.textContent = "Impossible de joindre le Federal Register (vérifie ta connexion / proxy).";
+    empty.classList.remove("hidden");
+    return;
+  }
+  const last = r.decrees[0];
+  document.getElementById("decrees-kpis").innerHTML = `
+    ${kpi(r.label, fmt.int(r.total), "depuis le " + fmt.date(r.since), "gold")}
+    ${kpi("Dernier signé", last?.signed ? fmt.date(last.signed) : "—", last?.number ? "n° " + last.number : "")}
+    ${kpi("Dernière parution", last?.published ? fmt.date(last.published) : "—", "au Federal Register")}`;
+  if (!r.decrees.length) {
+    list.innerHTML = "";
+    empty.textContent = "Aucun texte de ce type pour le moment.";
+    empty.classList.remove("hidden");
+    return;
+  }
+  list.innerHTML = r.decrees.map((d) => {
+    const num = d.number ? `<span class="badge">n° ${escapeHtml(d.number)}</span>` : "";
+    const signed = d.signed ? `Signé le ${fmt.date(d.signed)}` : "";
+    const published = d.published ? `publié le ${fmt.date(d.published)}` : "";
+    const abstract = d.abstract ? `<div class="post-original">${escapeHtml(d.abstract)}</div>` : "";
+    const pdf = d.pdf ? ` · <a class="post-link" href="${escapeHtml(d.pdf)}" target="_blank" rel="noopener">PDF ↗</a>` : "";
+    return `<article class="card post-card">
+      <div class="post-head">${num}<span class="post-date">${[signed, published].filter(Boolean).join(" · ")}</span></div>
+      <div class="post-title">${escapeHtml(d.title)}</div>
+      ${abstract}
+      <a class="post-link" href="${escapeHtml(d.url)}" target="_blank" rel="noopener">Lire le texte officiel ↗</a>${pdf}
+    </article>`;
+  }).join("");
+}
+
 // ---------------- Vue : DJT ----------------
 async function loadDJT(range) {
   state.djtRange = range;
@@ -312,6 +358,9 @@ function boot() {
   // boutons de plage DJT
   document.querySelectorAll("#djt-ranges button").forEach((b) =>
     b.addEventListener("click", () => loadDJT(b.dataset.range)));
+  // types de textes (décrets / proclamations / mémorandums)
+  document.querySelectorAll("#decree-types button").forEach((b) =>
+    b.addEventListener("click", () => loadDecrees(b.dataset.type)));
   // comparaison S&P 500
   document.getElementById("djt-compare-btn").addEventListener("click", () => {
     state.compareMode = !state.compareMode;
